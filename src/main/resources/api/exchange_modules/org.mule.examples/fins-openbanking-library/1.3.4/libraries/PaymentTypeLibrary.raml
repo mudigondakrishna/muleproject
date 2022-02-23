@@ -1,0 +1,346 @@
+#%RAML 1.0 Library
+usage: Open Banking definitions relating to Account information services.
+
+uses:
+  SharedTypes: ./SharedTypeLibrary.raml
+
+types:
+  ActionType: 
+    enum: [ CREDIT_TRANSFER, DEBIT_TRANSFER, REMITTANCE, CASH_IN, CASH_OUT, PAYMENT, TRANSFER, INTERNATIONAL_TRANSFER, NATIONAL_TRANSFER, CREDIT_CARD_PAYMENT, ALTERNATIVE_PAYMENT, CRYPTO_PAYMENT ]
+
+  AddressType:
+        enum: [ Business, Correspondence, DeliveryTo, MailTo, POBox, Postal, Residential, Statement ]
+
+  Authorisation:
+    type: object
+    properties:
+      AuthorisationType: SharedTypes.AuthorisationType
+      CompletionDateTime:
+        type:  datetime
+        required: false
+
+  AuthorisationStatus:
+    enum: [ PaymentAuthorized, PaymentRejected, PaymentRequestInvalid ]
+
+  ChannelType:  
+      enum: [ LOCAL, Bank_SWIFT, Bank_ACH, Bank_Fedwire, Bank_SEPA, Blockchain ]
+
+  ChargeBearer:
+    enum: [ BorneByCreditor, BorneByDebtor, FollowingServiceLevel, Shared ]
+
+  Charges:
+    type: object
+    properties:
+      ChargeBearer: ChargeBearer
+      Type: string
+
+  Creditor:
+    type: object
+    properties:
+      Name: string
+      PostalAddress:
+        type: PostalAddress
+        required: false
+  
+  CreditorAccount:
+    type: object
+    properties:
+      SchemeName: 
+        type: SchemeName
+        required: false
+      Identification: string
+      Name: string
+      AccountType:  
+        type: string
+        required: false
+      SecondaryIdentification: 
+        type: string
+        required: false
+
+  CreditorAgent:
+    type: object
+    properties:
+      SchemeName: 
+        type: SchemeName
+        required: false
+      Identification: string
+      Name: string
+      PostalAddress:
+        type: PostalAddress
+        required: false
+  
+  Debtor:
+    type: object
+    properties:
+      Name: string
+      PostalAddress:
+        type: PostalAddress
+        required: false
+
+  DebtorAccount:
+    type: object
+    properties:
+      SchemeName:
+          type: SchemeName
+          required: false
+      Identification: string
+      Name: string
+      AccountType:  
+        type: string
+        required: false
+      SecondaryIdentification:  
+        type: string
+        required: false
+
+  DebtorAgent:
+    type: object
+    properties:
+      SchemeName: 
+        type: SchemeName
+        required: false
+      Identification: string
+      Name: string 
+      PostalAddress:
+        type: PostalAddress
+        required: false
+        
+  DeliveryAddress:
+      type: object
+      properties:
+        AddressLine:  string
+        StreetName: string
+        BuildingNumber: string
+        PostCode: string
+        TownName: string
+        CountrySubdivision: 
+          type: string
+          description: State/Province
+        Country:  string
+
+  ExchangeRateInformation:
+    type: object
+    properties:
+      UnitCurrency: SharedTypes.CurrencyOfTransfer
+      ExchangeRate: number
+      RateType: RateType
+      ContractIdentification: string
+
+  Initiation:
+    type:  object
+    properties:
+      InstructionIdentification: ActionType
+      EndToEndIdentification: string
+      ChannelType: ChannelType
+      UserID: 
+        type: string
+        required: false
+      LocalInstrument: 
+        type: string
+        required: false
+      InstructionPriority:  InstructionPriority
+      Purpose:  
+        type: string
+        required: false
+      ChargeBearer: 
+        type: ChargeBearer
+        required: false
+      CurrencyOfTransfer: SharedTypes.CurrencyOfTransfer
+      InstructedAmount: InstructedAmount
+      ExchangeRateInformation:  
+        type: ExchangeRateInformation
+        required: false
+      DebtorAccount: 
+        type: DebtorAccount
+        required: false
+      DebtorAgent:  
+        type: DebtorAgent
+        required: false
+      Debtor:
+        type: Debtor
+        required: false
+      Creditor: 
+        type: Creditor
+        required: false
+      CreditorAgent:  
+        type: CreditorAgent
+        required: false
+      CreditorAccount:  CreditorAccount
+      RemittanceInformation:  
+        type: RemittanceInformation
+        required: false
+      SupplementaryData:  
+        type: string
+        required: false
+
+  InstructedAmount:
+    type: object
+    properties:
+      Amount: number
+      Currency: string
+
+  InstructionPriority:
+      enum: [ Normal, Urgent ]
+
+  PaymentConsentCode:
+    enum: [ AwaitingAuthorisation, Rejected, Authorised, Consumed ]
+
+  PaymentContextCode:
+    enum: [ EcommerceGoods, PersonToPerson ]
+
+  PaymentDetails:
+    type: object
+    properties: {}
+
+  PostalAddress:
+    type: object
+    properties:
+      AddressType: AddressType
+      Department: 
+        type: string
+        required: false
+      SubDepartment: 
+        type: string
+        required: false
+      StreetName: string
+      StreetNumber: string
+      PostCode: string
+      TownName: string
+      CountrySubdivision: 
+        type: string
+        description: State/Province
+      Country: string
+      AddressLine: string
+    
+  RateType:
+    enum: [ Actual, Agreed, Indicative ]
+
+  RemittanceInformation:
+    type: object
+    properties:
+      Reference: string
+      Unstructured: string
+
+  RequestDataConsent:
+      type: object
+      properties:
+        Initiation: Initiation
+        Authorisation: 
+          type: Authorisation
+          required: false
+        SCASupportData: 
+          type: SCASupportData
+          required: false
+
+  RequestDataInitiation:
+    type: object
+    properties: 
+      ConsentId:  string
+      Initiation: Initiation
+
+  RequestDataSubmission:
+    type: object
+    properties: 
+      PaymentId: string
+      Initiation: Initiation
+  
+  ResponseDataConsent:
+    type: object
+    properties:
+      PaymentId: string
+      ConsentId: 
+        type:  string
+        required: false
+      CreationDateTime: datetime
+      Status: PaymentConsentCode
+      StatusUpdateDateTime:
+        type: datetime
+        required: false
+      CutoffDateTime:
+        type: datetime
+        required: false
+      ExpectedExecutiontDateTime:
+        type: datetime
+        required: false
+      ExpectedSettlementtDateTime:
+        type: datetime
+        required: false
+      Charges: 
+        type: Charges
+        required: false
+      ExchangeRateInformation:  
+        type: ExchangeRateInformation
+        required: false
+      Initiation: Initiation
+      Authorisation:
+          type: Authorisation
+          required: false
+      SCASupportData: 
+          type: SCASupportData
+          required: false
+
+  ResponseDataInitiation:
+    type: object
+    properties: 
+      PaymentId: string
+      ConsentId: 
+        type:  string
+        required: false
+      CreationDateTime: datetime
+      Status: TransactionStatus
+      StatusUpdateDateTime:
+        type: datetime
+        required: false
+      ExpectedExecutionDateTime:
+        type: datetime
+        required: false
+      ExpectedSettlementDateTime:
+        type: datetime
+        required: false
+      Charges: 
+        type: Charges
+        required: false
+      ExchangeRateInformation:  
+        type: ExchangeRateInformation
+        required: false
+      Initiation: Initiation
+
+  ResponseDataSubmission:
+    type: object
+    properties: 
+      PaymentSubmissionId: string
+      PaymentId: string
+      Status: TransactionStatus
+      CreationDateTime : datetime
+
+  Risk:
+    type: object
+    properties:
+      PaymentContextCode: PaymentContextCode
+      MerchantCategoryCode: 
+        type: string
+        required: false
+      MerchantCustomerIdentification: 
+        type: string
+        required: false
+      DeliveryAddress: 
+        type: DeliveryAddress
+        required: false
+
+  SCASupportData:
+      type: object
+      properties:
+        RequestSCAExemptionType:  
+          type: string
+          required: false
+        AppliedAuthenticationApproach:
+          type: string
+          required: false
+        ReferencePaymentOrderId:  
+          type: string
+          required: false
+
+  SchemeName:
+    enum: [ SortCodeAccountNumber, RetailBank, InvestmentBank, FinTechPayment, CryptoPayment ]
+
+  TransactionStatus:
+    enum: [ Pending, AcceptedTechnicalValidation, Rejected, AceptedCustomerProfile, AcceptedSettlementInProcess, AcceptedSettlementCompleted, AcceptedWithoutPosting, AcceptedCreditSettlementCompleted ]

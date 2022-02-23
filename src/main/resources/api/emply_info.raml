@@ -1,0 +1,39 @@
+#%RAML 1.0
+title: emply_info
+version: v1
+traits:
+  resource: !include traits/trait.raml
+description: "emply details as per present status"
+/emply_info:
+  post:
+    is:
+      - resource
+    description: emplynpresent status
+    body:
+      application/json:
+        example: !include request/1-getfile.json
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "massage":"sucessfully updated"
+              }
+     
+  /{emply_prioussataus}:
+    get:
+      is:
+        - resource
+      description: "prious postion status"
+      body:
+        application/json:
+          example: !include request/post1file.json
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  "massage":"last time data get sucessfull"
+                }

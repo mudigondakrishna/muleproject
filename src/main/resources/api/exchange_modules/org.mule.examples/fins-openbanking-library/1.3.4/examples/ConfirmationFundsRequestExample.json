@@ -1,0 +1,20 @@
+{
+  "Account": {
+    "SchemeName": "RetailBank",
+    "Identification": "1127503214231087",
+    "Name": "Ariana Grande",
+    "AccountType": "Savings",
+    "SecondaryIdentification": ""
+  },
+  "Agency": {
+    "Name": "BOA",
+    "Identification": "BankBOA123",
+    "SchemeName": "RetailBank"
+  },
+  "Amount": {
+    "Amount": 300.00,
+    "Currency": "USD"
+  },
+  "Channel": "Bank_SWIFT",
+  "TransactionType": "INTERNATIONAL_TRANSFER"
+}

@@ -1,0 +1,38 @@
+#%RAML 1.0 Library
+usage: Defines reusable types and enumerations internal to the Open Banking Library
+types:
+  Amount:
+    type: object
+    properties:
+      Amount: number
+      Currency: CurrencyOfTransfer
+
+  AuthorisationType:
+    enum: [ TPP, ASPSP ]
+
+  BalanceType:
+    enum: [ ClosingAvailable, ClosingBooked, ClosingCleared, Expected, ForwardAvailable, Information, InterimAvailable, InterimBooked, InterimCleared, OpeningAvailable, OpeningBooked, OpeningCleared, PreviouslyClosedBooked ]
+
+  CreditLine:
+    type: object
+    properties:
+      Included: boolean
+      Type: CreditLineType
+
+  CreditLineType:
+    enum: [ Available, Credit, Emergency, Pre-Agreed, Temporary ]
+ 
+  CurrencyOfTransfer:
+    enum: [ AED, AUD, BRL, BTC, CAD, CNY, DKK, EUR, GBP, INR, JPY, KRW, MXN, USD, XDR ]
+
+  Links: 
+    type: object
+    properties:
+        Self: string
+
+  Meta:
+    type: object
+    properties: {}
+
+  OBCreditDebitCode:
+    enum: [ Credit, Debit ]

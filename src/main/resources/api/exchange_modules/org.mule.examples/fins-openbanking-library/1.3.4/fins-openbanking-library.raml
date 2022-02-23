@@ -1,0 +1,170 @@
+#%RAML 1.0 Library
+usage: Defines data types used in Open Banking definitions relating to services.
+
+uses:
+  AccountTypes: ./libraries/AccountTypeLibrary.raml
+  ConfirmationTypes: ./libraries/ConfirmationTypeLibrary.raml
+  PaymentTypes: ./libraries/PaymentTypeLibrary.raml
+  SharedTypes: ./libraries/SharedTypeLibrary.raml
+
+types:
+  #
+  # Exported Account types
+  #
+  AccountListResponse:
+    type: object
+    properties:
+      Data: 
+        type: object
+        properties:
+          Account:
+            type: array
+            items: AccountTypes.Account
+      Links:
+        type: SharedTypes.Links
+        required: false
+      Meta: 
+        type: SharedTypes.Meta
+        required: false
+    example:
+      !include ./examples/AccountListResponseExample.json
+
+  AccountRetrieveResponse:
+    type: object
+    properties:
+      Data: 
+        type: object
+        properties:
+          Account:
+            type: array
+            items: AccountTypes.Account
+      Links:
+        type: SharedTypes.Links
+        required: false
+      Meta: 
+        type: SharedTypes.Meta
+        required: false
+    example:
+      !include ./examples/AccountRetrieveResponseExample.json
+
+  AccountBalancesResponse:
+    type: object
+    properties:
+      Data:
+        type: object
+        properties:
+          Balance:
+            type: array
+            items: AccountTypes.Balance
+      Links:
+        type: SharedTypes.Links
+        required: false
+      Meta: 
+        type: SharedTypes.Meta
+        required: false
+    example:
+      !include ./examples/AccountBalancesResponseExample.json
+
+  #
+  # Exported Confirmation types
+  #
+  ConfirmationFundsRequest:
+    type: object
+    properties:
+      Account: PaymentTypes.DebtorAccount
+      Agency: PaymentTypes.DebtorAgent
+      Amount: PaymentTypes.InstructedAmount
+      Channel: PaymentTypes.ChannelType
+      TransactionType: PaymentTypes.ActionType
+    example:
+      !include ./examples/ConfirmationFundsRequestExample.json
+
+  ConfirmationFundsResponse:
+    type: object
+    properties:
+      Data: ConfirmationTypes.FundsAvailableResult
+      SupplementaryData:
+        type: string
+        required: false
+    example:
+      !include ./examples/ConfirmationFundsResponseExample.json
+
+  #
+  # Exported Payment types
+  #
+  PaymentAuthorizationRequest:
+    type: object
+    properties: 
+      PaymentID:  string
+      InstructedAmount: PaymentTypes.InstructedAmount
+      DebtorAgent:  
+        type: PaymentTypes.DebtorAgent
+        required: true
+      DebtorAccount:
+        type: PaymentTypes.DebtorAccount
+        required: true
+
+  PaymentAuthorizationResponse:
+    type: object 
+    properties:
+      PaymentID:  string
+      DebtorAgent:  
+        type: PaymentTypes.DebtorAgent
+        required: true
+      DebtorAccount:
+        type: PaymentTypes.DebtorAccount
+        required: true
+      Status: PaymentTypes.AuthorisationStatus
+      ExtendedStatusMessage:  
+        type: string
+        required: false
+      ExtendedStatusCode:
+        type: string
+        required: false
+      ExtendedStatusData:
+        type: object
+        required: false
+
+  PaymentConsentRequest:
+      type: object
+      properties:
+        Data: PaymentTypes.RequestDataConsent
+        Risk: PaymentTypes.Risk
+
+  PaymentConsentResponse:
+    type: object
+    properties:
+      Data: PaymentTypes.ResponseDataConsent
+      Risk: PaymentTypes.Risk
+
+  PaymentInitiationRequest:
+    type: object
+    properties:
+        Data: PaymentTypes.RequestDataInitiation
+        Risk: PaymentTypes.Risk
+    example:
+      !include ./examples/PaymentInitiationRequestExample.json
+
+  PaymentInitiationResponse:
+    type: object
+    properties: 
+      Data: PaymentTypes.ResponseDataInitiation
+    example:
+      !include ./examples/PaymentInitiationResponseExample.json
+
+  PaymentSubmissionRequest:
+    type: object
+    properties: 
+      Data: PaymentTypes.RequestDataSubmission
+      Risk: PaymentTypes.Risk
+
+  PaymentSubmissionResponse:
+    type: object
+    properties: 
+      Data: PaymentTypes.ResponseDataSubmission
+      Links:
+        type: SharedTypes.Links
+        required: false
+      Meta: 
+        type: SharedTypes.Meta
+        required: false

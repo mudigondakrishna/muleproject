@@ -1,0 +1,62 @@
+#%RAML 1.0 Library
+usage: Open Banking definitions relating to Account information services.
+
+uses:
+  SharedTypes: ./SharedTypeLibrary.raml
+
+types:
+  Account:
+    type: object
+    properties:
+      AccountId:  string
+      Status:
+        type: string
+        required: false
+      StatusUpdateDateTime: 
+        type: datetime
+        required: false
+      Currency: SharedTypes.CurrencyOfTransfer
+      AccountType:  string
+      AccountSubType: string
+      Description:
+          type :  string
+          required: false
+      Nickname:
+        type: string
+        required: false
+      Account:  
+          type: array
+          items: AccountDetail
+          required: false
+      Servicer:
+        type: Servicer
+        required: false
+
+  AccountDetail:  
+    type: object
+    properties:
+      SchemeName: string
+      Identification:  string
+      Name: string
+      SecondaryIdentification:
+        type: string
+        required: false
+        
+  Balance:
+    type: object
+    properties:
+      AccountId:  string
+      CreditDebitIndicator: SharedTypes.OBCreditDebitCode
+      Type: SharedTypes.BalanceType
+      DateTime: datetime
+      Amount:  SharedTypes.Amount
+      CreditLine: 
+        type: array
+        items: SharedTypes.CreditLine
+        required: false
+
+  Servicer:
+    type: object
+    properties:
+      SchemeName: string
+      Identification: string
