@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e86f541c-3d16-4260-a015-034a415162a3" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="cb7e4572-1ab7-4122-919d-adffb8b05dd6" >
+		<file:connection workingDir="F:\New folder" />
+	</file:config>
+	<flow name="batchjob_writeFlow" doc:id="9c4a297d-ef2f-4909-bec0-2213b0a90e4f" >
+		<http:listener doc:name="Listener" doc:id="7e526fe9-b105-4ff4-99fb-0ec1200dae92" config-ref="HTTP_Listener_config" path="/batchwrite"/>
+		<file:read doc:name="Read" doc:id="cf5a4899-7061-4f2e-aec4-1e1996efa439" path="C:\Users\LENOVO\Downloads\csv file\empdata New.csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="4757a817-6779-4563-9e9f-17d5add34e79" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map(item,index) ->
+{
+	FID:item.FID,
+	country:item.country,
+	state:item.state,
+	distic:item.distic
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="batchjob_writeBatch_Job" doc:id="0290f62a-b07f-47ea-90e5-7a43f8dd7091" >
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="e1dd8307-1afd-4986-9e30-eb38261bc680" >
+					<ee:transform doc:name="Transform Message" doc:id="0c73022f-228c-4fe1-906e-c05b707556ac" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	FID:payload.FID,
+	country:payload.country,
+	state:payload.state,
+	distic:payload.distic
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="cb11ec63-fc90-473d-b347-0d013d4c3b6c" size="10">
+						<ee:transform doc:name="Transform Message" doc:id="ad6f6c8e-84be-4e2f-a9e6-742882a6b27b" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map(item,index) ->
+{
+	FID:item.FID,
+	country:item.country,
+	state:item.state,
+	distic:item.distic
+}]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<file:write doc:name="Write" doc:id="38481e21-06f5-49b8-9327-61928b4bda4e" config-ref="File_Config" path="#['population' ++ (now() as String {format:'yyyy-MM-dd-hh-mm-ss'}) ++(random()*1000)++'.txt']"/>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="3155604b-1bf9-4b30-a71d-e476912db157" message="batch job data saved sucessfully"/>
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+</mule>
